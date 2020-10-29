@@ -10,36 +10,16 @@
   <h>test websocket</h>
   <p id="message-json"></p>
   <p id="message-text"></p>
+  <script src="/static/sakalli.js"></script>
   <script>
-
+    sakalli = new Sakalli("localhost:8080/ws/");
     window.onload = function () {
-      var conn;
-      var token = Math.random().toString(36).substring(8);
-      console.log(token)
-      if (window["WebSocket"]) {
-        conn = new WebSocket("ws://" + document.location.host + "/ws/" + token);
+      sakalli.init("555")
+      document.addEventListener("sakalliNotification", function (evt) {
+        console.log("Received Message: " + evt.detail.data);
+        document.getElementById("message-json").innerText += evt.detail.data;
 
-        conn.onclose = function (evt) {
-          console.log("connection closed")
-        };
-
-        conn.onopen = function (evt) {
-          console.log("Connection open ...");
-        };
-
-        conn.onmessage = function (evt) {
-          console.log("Received Message: " + evt.data);
-          document.getElementById("message-json").innerText += evt.data;
-        };
-
-        window.onbeforeunload = function () {
-          conn.send("closing ...")
-          conn.close()
-        }
-      } else {
-        console.log("browser does not support websocket")
-      }
-
+      }, false);
 
     };
   </script>

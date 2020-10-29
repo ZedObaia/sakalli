@@ -3,6 +3,7 @@ package main
 import (
 	"github/zedObaia/sakalli/sakalli"
 
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,6 +17,6 @@ func main() {
 	router.GET("/", func(c *gin.Context) {
 		c.File("./public/home.html")
 	})
-
+	router.Use(static.Serve("/static", static.LocalFile("./static", true)))
 	router.Run(":8080")
 }

@@ -1,6 +1,7 @@
 package sakalli
 
 import (
+	"bytes"
 	"net/http"
 	"time"
 
@@ -23,6 +24,12 @@ const (
 	maxMessageSize = 512
 )
 
+var (
+	newline = []byte{'\n'}
+	space   = []byte{' '}
+)
+
+// Client : websocket client
 type Client struct {
 	server *Server
 
@@ -41,50 +48,39 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// func (c *Client) readPump() {
-// 	defer func() {
-// 		c.server.unregister <- c
-// 		c.conn.Close()
-// 	}()
-// 	c.conn.SetReadLimit(maxMessageSize)
-// 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-// 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
-// 	for {
-// 		err := c.conn.ReadJSON()
-// 		if err != nil {
-// 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-// 				log.Printf("error: %v", err)
-// 			}
-// 			break
-// 		}
-// 		c.server.broadcast <- message
-// 	}
-// }
+func (c *Client) readPump() {
+	defer func() {
+		c.server.unregister <- c
+		c.conn.Close()
+	}()
+	c.conn.SetReadLimit(maxMessageSize)
+	c.conn.SetReadDeadline(time.Now().Add(pongWait))
+	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	for {
+		_, message, err := c.conn.ReadMessage()
+		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Info("error: ", err)
+			}
+			break
+		}
+		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+	}
+}
 
 func (c *Client) writePump() {
 	defer func() {
-		// c.conn.Close()
+		c.conn.Close()
 	}()
 	for {
 		select {
 		case message, ok := <-c.send:
 			if !ok {
 				// The hub closed the channel.
-				log.Warn("closing")
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-
-			w, err := c.conn.NextWriter(websocket.TextMessage)
-			if err != nil {
-				return
-			}
 			c.conn.WriteJSON(message)
-
-			if err := w.Close(); err != nil {
-				return
-			}
-
 		}
 	}
 }
@@ -96,11 +92,11 @@ func serveWs(server *Server, w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 		return
 	}
-	client := &Client{server: server, conn: conn, send: make(chan Message)}
+	client := &Client{server: server, conn: conn, send: make(chan Message, 1024)}
 	client.server.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()
-	// go client.readPump()
+	go client.readPump()
 }

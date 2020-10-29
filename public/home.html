@@ -11,10 +11,13 @@
   <p id="message-json"></p>
   <p id="message-text"></p>
   <script>
+
     window.onload = function () {
       var conn;
+      var token = Math.random().toString(36).substring(8);
+      console.log(token)
       if (window["WebSocket"]) {
-        conn = new WebSocket("ws://" + document.location.host + "/ws");
+        conn = new WebSocket("ws://" + document.location.host + "/ws/" + token);
 
         conn.onclose = function (evt) {
           console.log("connection closed")

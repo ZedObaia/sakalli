@@ -1,5 +1,9 @@
 package sakalli
 
+import (
+	"github.com/sirupsen/logrus"
+)
+
 // Server : hub for ws connections
 type Server struct {
 	// Registered clients.
@@ -37,13 +41,18 @@ func (h *Server) Run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
+			logrus.Infoln(len(h.clients), " clients connected")
 			for client := range h.clients {
-				select {
-				case client.send <- message:
-				default:
-					close(client.send)
-					delete(h.clients, client)
+				if message.ID == client.id {
+
+					select {
+					case client.send <- message:
+					default:
+						close(client.send)
+						delete(h.clients, client)
+					}
 				}
+
 			}
 		}
 	}

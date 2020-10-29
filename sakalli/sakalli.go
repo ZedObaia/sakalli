@@ -10,6 +10,7 @@ type Message struct {
 	Type interface{}            `json:"type"`
 	Data map[string]interface{} `json:"data"`
 	Page interface{}            `json:"page"`
+	ID   string                 `json:"id"`
 }
 
 // SendHandler : handels http requests to rely data to websocket clients
@@ -20,13 +21,19 @@ func SendHandler(server *Server) gin.HandlerFunc {
 		data := make(map[string]interface{})
 		err := c.BindJSON(&data)
 		if err != nil {
-			c.JSON(400, "Bad JSON")
+			c.JSON(400, gin.H{
+				"error":  "Bad Request",
+				"reason": "Json required",
+			})
 		}
+
+		id := c.Param("token")
 
 		server.broadcast <- Message{
 			Page: data["page"].(interface{}),
 			Type: data["type"].(interface{}),
 			Data: data["data"].(map[string]interface{}),
+			ID:   id,
 		}
 
 		c.JSON(200, gin.H{"body": data})
@@ -43,7 +50,8 @@ func WsHandler(server *Server) gin.HandlerFunc {
 			log.Error("Failed to upgrade connections", err)
 			return
 		}
-		client := &Client{server: server, conn: conn, send: make(chan Message)}
+		token := c.Param("token")
+		client := &Client{server: server, conn: conn, send: make(chan Message), id: token}
 		client.server.register <- client
 		go client.writePump()
 		go client.readPump()

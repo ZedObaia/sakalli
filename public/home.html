@@ -1,0 +1,36 @@
+ <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-" />
+       <title>index</title>
+     </head>
+     <body>
+       <h>test websocket</h>
+       <p id="message-json"></p>
+      <p id="message-text"></p>
+      <script>
+        function jsonWS() {
+          var ws = new WebSocket("ws://localhost:8080/ws");
+          //Triggered when connection is open
+          ws.onopen = function (evt) {
+            console.log("Connection open ...");
+            var obj = { a: "bb"};
+            ws.send(JSON.stringify(obj));
+          };
+          //Triggered when a message is received
+          ws.onmessage = function (evt) {
+            console.log("Received Message: " + evt);
+            document.getElementById("message-json").innerText += evt.data;
+          };
+          //Triggered when connection is closed
+          ws.onclose = function (evt) {
+            console.log("Connection closed.");
+          };
+        }
+  
+       
+        // Start websocket
+        jsonWS();
+      </script>
+    </body>
+  </html>

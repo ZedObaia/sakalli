@@ -14,7 +14,11 @@ import (
 func main() {
 	port := flag.String("port", "8080", "server port")
 	flag.Parse()
-	log.Info("Trying to run on port : ", *port)
+	p := "8080"
+	if *port != "" {
+		p = *port
+	}
+	log.Info("Trying to run on port : ", p)
 	gin.SetMode(gin.ReleaseMode)
 	server := sakalli.NewServer()
 	go server.Run()
@@ -28,9 +32,9 @@ func main() {
 		c.File("./public/home.html")
 	})
 	router.Use(static.Serve("/static", static.LocalFile("./static", true)))
-	err := router.Run(":" + *port)
+	err := router.Run(":" + p)
 	if err != nil {
 		msg := "Port %v is not free\n"
-		log.Error(fmt.Sprintf(msg, *port))
+		log.Error(fmt.Sprintf(msg, p))
 	}
 }

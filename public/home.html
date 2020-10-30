@@ -14,15 +14,21 @@
   <script>
     const sakalli = new Sakalli("localhost:8080/");
     window.onload = function () {
-      sakalli.init("555")
+      let connected = sakalli.connect("555");
+      if (connected) {
+        sakalli.on('notification', data => {
+          console.log(data);
+          document.getElementById("message-json").innerHTML += "<p>" + JSON.stringify(data) + "</p>";
+        })
 
-      sakalli.addEventListener("sakalliNotification", (evt) => {
-        const data = evt.detail
-        // do something here.
-        console.log("Received Message: ");
-        console.log(data)
-        document.getElementById("message-json").innerHTML += "<p>" + JSON.stringify(data) + "</p>";
-      });
+        sakalli.on('closed', () => {
+          console.log("closed!!");
+        })
+
+        sakalli.on('opened', function () {
+          console.log("connection established");
+        })
+      }
     };
   </script>
 </body>

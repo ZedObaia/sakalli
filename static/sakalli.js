@@ -12,8 +12,10 @@ class Sakalli extends EventTarget {
             this.id = id
         }
         console.log(this.id)
+        if (!this.host.endsWith("/"))
+            this.host += "/"
         if (window["WebSocket"]) {
-            conn = new WebSocket("ws://" + this.host + this.id);
+            conn = new WebSocket("ws://" + this.host + "listen/" + this.id);
 
             conn.onclose = function (evt) {
                 console.log("connection closed")
@@ -29,15 +31,6 @@ class Sakalli extends EventTarget {
                     bubbles: true,
                     cancelable: true
                 }))
-                // let event = new CustomEvent(
-                //     "sakalliNotification", 
-                //     {
-                //         detail: JSON.parse(evt.data),
-                //         bubbles: true,
-                //         cancelable: true
-                //     }
-                // );
-                // document.dispatchEvent(event)
             }.bind(this);
 
             window.onbeforeunload = function () {

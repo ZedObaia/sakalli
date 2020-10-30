@@ -7,7 +7,7 @@ import (
 // Server : hub for ws connections
 type Server struct {
 	// Registered clients.
-	clients map[*Client]bool
+	clients map[string]map[*Client]bool
 
 	// Inbound messages from the clients.
 	broadcast chan Message
@@ -25,7 +25,8 @@ func NewServer() *Server {
 		broadcast:  make(chan Message),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
+		//  map of ids that points to map of clients for easy removal and easy access
+		clients: make(map[string]map[*Client]bool),
 	}
 }
 
@@ -34,26 +35,34 @@ func (h *Server) Run() {
 	for {
 		select {
 		case client := <-h.register:
-			h.clients[client] = true
+			if _, ok := h.clients[client.id]; ok {
+				h.clients[client.id][client] = true
+			} else {
+				h.clients[client.id] = make(map[*Client]bool)
+				h.clients[client.id][client] = true
+			}
+			logrus.Info(h.clients)
+
 		case client := <-h.unregister:
-			if _, ok := h.clients[client]; ok {
-				delete(h.clients, client)
-				close(client.send)
+			if _, ok := h.clients[client.id][client]; ok {
+				client.unRegister()
 			}
 		case message := <-h.broadcast:
-			logrus.Infoln(len(h.clients), " clients connected")
-			for client := range h.clients {
-				if message.ID == client.id {
+			for _, id := range message.IDs {
+				if _, ok := h.clients[id]; ok {
+					logrus.Infoln("Broadcasting to ", len(h.clients[id]), "connected clients ID: ", id)
+					for client := range h.clients[id] {
 
-					select {
-					case client.send <- message:
-					default:
-						close(client.send)
-						delete(h.clients, client)
+						select {
+						case client.send <- message:
+						default:
+							client.unRegister()
+						}
+
 					}
 				}
-
 			}
+
 		}
 	}
 }

@@ -82,6 +82,11 @@ func (c *Client) writePump() {
 	}
 }
 
+func (c *Client) unRegister() {
+	close(c.send)
+	delete(c.server.clients[c.id], c)
+}
+
 // serveWs handles websocket requests from the peer.
 func serveWs(server *Server, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)

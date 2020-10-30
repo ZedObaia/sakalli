@@ -2,25 +2,27 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-" />
+  <meta charset="UTF-8" />
   <title>index</title>
 </head>
 
 <body>
   <h>test websocket</h>
-  <p id="message-json"></p>
-  <p id="message-text"></p>
+  <div id="message-json"></div>
+  <div id="message-text"></div>
   <script src="/static/sakalli.js"></script>
   <script>
-    sakalli = new Sakalli("localhost:8080/ws/");
+    const sakalli = new Sakalli("localhost:8080/listen/");
     window.onload = function () {
       sakalli.init("555")
-      document.addEventListener("sakalliNotification", function (evt) {
-        console.log("Received Message: " + evt.detail.data);
-        document.getElementById("message-json").innerText += evt.detail.data;
 
-      }, false);
-
+      sakalli.addEventListener("sakalliNotification", (evt) => {
+        const data = evt.detail
+        // do something here.
+        console.log("Received Message: ");
+        console.log(data)
+        document.getElementById("message-json").innerHTML += "<p>" + JSON.stringify(data) + "</p>";
+      });
     };
   </script>
 </body>

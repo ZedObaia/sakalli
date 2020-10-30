@@ -1,5 +1,6 @@
-class Sakalli {
+class Sakalli extends EventTarget {
     constructor(host, id) {
+        super()
         this.host = host;
         this.id = id;
 
@@ -7,7 +8,7 @@ class Sakalli {
 
     init(id) {
         let conn;
-        if(id){
+        if (id) {
             this.id = id
         }
         console.log(this.id)
@@ -23,21 +24,23 @@ class Sakalli {
             };
 
             conn.onmessage = function (evt) {
-                // console.log("Received Message: " + evt.data);
-                // document.getElementById("message-json").innerText += evt.data;
-                let event = new CustomEvent(
-                    "sakalliNotification", 
-                    {
-                        detail: evt,
-                        bubbles: true,
-                        cancelable: true
-                    }
-                );
-                document.dispatchEvent(event)
-            };
+                this.dispatchEvent(new CustomEvent("sakalliNotification", {
+                    detail: JSON.parse(evt.data),
+                    bubbles: true,
+                    cancelable: true
+                }))
+                // let event = new CustomEvent(
+                //     "sakalliNotification", 
+                //     {
+                //         detail: JSON.parse(evt.data),
+                //         bubbles: true,
+                //         cancelable: true
+                //     }
+                // );
+                // document.dispatchEvent(event)
+            }.bind(this);
 
             window.onbeforeunload = function () {
-                conn.send("closing ...")
                 conn.close()
             }
         } else {

@@ -1,4 +1,4 @@
-module github/zedObaia/sakalli
+module github.com/zedObaia/sakalli
 
 go 1.14
 

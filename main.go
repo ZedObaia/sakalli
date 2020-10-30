@@ -3,7 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github/zedObaia/sakalli/sakalli"
+
+	"github.com/zedObaia/sakalli/sakalli"
 
 	log "github.com/sirupsen/logrus"
 
@@ -26,11 +27,7 @@ func main() {
 	router := gin.Default()
 	router.POST("/send/:token", sakalli.SendHandler(server))
 	router.POST("/broadcast/", sakalli.BroadcastHandler(server))
-
 	router.GET("/listen/:token", sakalli.WsHandler(server))
-	router.GET("/", func(c *gin.Context) {
-		c.File("./public/home.html")
-	})
 	router.Use(static.Serve("/static", static.LocalFile("./static", true)))
 	err := router.Run(":" + p)
 	if err != nil {

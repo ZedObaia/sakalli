@@ -4,7 +4,7 @@ If you're lazy like me and you don't want to spend some time implementing a webs
 
 ## Usage
 
-## First of all let's run the server
+## First of all let's run the server (you need to have go installed, no docker yet)
 
 ### Build and run
 1. Build

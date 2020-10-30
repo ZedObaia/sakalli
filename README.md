@@ -6,7 +6,7 @@ If you're lazy like me and you don't want to spend some time implementing a webs
 
 ## First of all let's run the server
 
-### /*Build and run
+### Build and run
 1. Build
 
   * `make build`

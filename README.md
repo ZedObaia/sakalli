@@ -47,12 +47,12 @@ and `sakalli.js` is at `/static/sakalli.js`
   </script>
  ```
  Wow, that was easy!!
- ## now let's notify the client from your backend, this is the last part I promise`
+ ## Now let's notify the client from your backend, this is the last part I promise
  So this is basically just a POST request to sakalli service, it will take care of the rest.
  There are two endpoints
 | Endpoint  |  JSON Format |  Description |
 | ------------ | ------------ | ------------ |
-| `http://localhost:8080/send/<user-id>/`  |  `{"page" : "string","type" : "string","data" : {"prop1" : "value1", "prop2" : "value2"}, //free form}`| To send an event to all connected clients for a specific user |
+| `http://localhost:8080/send/<user-id>/`  |  `{"page" : "string", "type" : "string", "data" : {"prop1" : "value1", "prop2" : "value2"}, //free form}`| To send an event to all connected clients for a specific user |
 | `http://localhost:8080/broadcast/`  |  `{page" : "string", type" : "string", data" : {"prop1" : "value1", "prop2" : "value2"}, ids" : ["user1_id", "user2_id"]}` | To send an event to all connected clients for multiple users |
 
 

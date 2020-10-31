@@ -4,7 +4,7 @@ If you're lazy like me and you don't want to spend some time implementing a webs
 
 ## Usage
 
-## First of all let's run the server (you need to have go installed, no docker yet)
+## First of all let's run the server 
 
 ### Build and run
 1. Build
@@ -18,6 +18,9 @@ If you're lazy like me and you don't want to spend some time implementing a webs
 
   * `make run`
   * or `make run PORT=8000`
+
+### or simply use docker 
+  * `docker run -p 8080:8080 zedobaia/sakalli-docker:0.0.1`
 
 That's it for the server!
 ## let set up a simple javascript client

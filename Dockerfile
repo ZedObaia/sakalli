@@ -1,4 +1,4 @@
-FROM golang:alpine
+FROM golang:alpine AS builder
 
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
@@ -12,7 +12,6 @@ COPY go.sum .
 RUN go mod download
 
 COPY . .
-RUN rm -fr examples/ *.js Makefile
 
 RUN go build -o sakalli-server .
 
@@ -20,6 +19,10 @@ WORKDIR /dist
 
 RUN cp /build/sakalli-server .
 
+FROM scratch
+
+COPY --from=builder /dist/sakalli-server /
+
 EXPOSE 8080
 
-CMD ["/dist/sakalli-server"]
+ENTRYPOINT ["/sakalli-server"]

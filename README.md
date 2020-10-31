@@ -20,7 +20,7 @@ If you're lazy like me and you don't want to spend some time implementing a webs
   * or `make run PORT=8000`
 
 ### or simply use docker 
-  * `docker run -p 8080:8080 zedobaia/sakalli-docker:0.0.1`
+  * `docker run -p 8080:8080 zedobaia/sakalli-docker:latest`
 
 That's it for the server!
 ## let set up a simple javascript client

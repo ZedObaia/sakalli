@@ -25,9 +25,10 @@ If you're lazy like me and you don't want to spend some time implementing a webs
 That's it for the server!
 ## let set up a simple javascript client
 Let's assume you're running on `localhost:8080`
-and `sakalli.js` is at `/static/sakalli.js`
  ```
- <script src="/static/sakalli.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/sakalli@1.0.3/dist/sakalli.umd.js">
+ 
+ </script>
  script>
     const sakalli = new Sakalli("localhost:8080"); // or your server ip
     window.onload = function () {

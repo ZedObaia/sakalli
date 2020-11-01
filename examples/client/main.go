@@ -1,8 +1,14 @@
 package main
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 func main() {
 	http.Handle("/", http.FileServer(http.Dir("./static")))
-	http.ListenAndServe(":3000", nil)
+	err := http.ListenAndServe(":3000", nil)
+	if err != nil {
+		log.Println(err)
+	}
 }

@@ -53,7 +53,7 @@ Let's assume you're running on `localhost:8080`
  There are two endpoints
 | Endpoint  |  JSON Format |  Description |
 | ------------ | ------------ | ------------ |
-| `http://localhost:8080/send/<user-id>/`  |  `{"page" : "string","type" : "string","data" : {"prop1" : "value1", "prop2" : "value2"}, //free form}`| To send an event to all connected clients for a specific user |
+| `http://localhost:8080/send/<user-id>/`  |  `{"page" : "string", "type" : "string", "data" : {"prop1" : "value1", "prop2" : "value2"}, //free form}`| To send an event to all connected clients for a specific user |
 | `http://localhost:8080/broadcast/`  |  `{page" : "string", type" : "string", data" : {"prop1" : "value1", "prop2" : "value2"}, ids" : ["user1_id", "user2_id"]}` | To send an event to all connected clients for multiple users |
 
 
